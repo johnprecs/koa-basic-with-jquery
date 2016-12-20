@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/JavaScript">
+
+$(document).ready(function() {
+	$(".conview").load( "/view");
+
+	$('.textsearch').keyup(function() {
+		var sdata = $('.textsearch').val();
+
+			$.post("/search", {
+			psdata : sdata,
+			},function(data){
+			$(".conview").html(data);
+			});
+	});
+});
+			
+function caccount(){
+	$(".sodlanan2").hide();
+	$(".sodlanan1").hide();
+	$(".sodlanan").fadeIn();
+	var x = document.getElementById("selectopt");
+	var i;
+	for(i=x.options.length-1; i>=1 ;i--){
+		x.remove(i);
+	}
+}			
+function vaccount(){
+	$(".sodlanan").hide();
+	$(".sodlanan1").fadeIn();
+	$(".sodlanan2").hide();
+	$(".conview").load( "/view");
+	var x = document.getElementById("selectopt");
+	var i;
+	for(i=x.options.length-1; i>=1 ;i--){
+		x.remove(i);
+	}
+				
+}
+function eaccount(){
+	$(".sodlanan2").fadeIn();
+	$(".sodlanan1").hide();
+	$(".sodlanan").hide();
+	$(".conview").load( "/view");
+				
+	$.get("/select", function(data){
+		var kani = data;
+		var sel = document.getElementById('selectopt');
+		for(var i = 0; i < kani.length; i++) {
+		var option = document.createElement("option");
+			option.text = kani[i];
+			sel.add(option);
+		}
+	});
+}
+
+function bcreate(){
+	var textfname = $('#textfname').val();
+	var textlname = $('#textlname').val();
+	var textemail = $('#textemail').val();
+					
+	$.post("/create", {
+		ptextfname : textfname,
+		ptextlname : textlname,
+		ptextemail : textemail
+		},function(data){
+			alert(data + " " + status);
+			$('#textfname').val("");
+			$('#textlname').val("");
+			$('#textemail').val("");
+		});
+}
+
+function changesel(){
+	var selfname = $('#selectopt').val();
+	
+	$.post("/edit", {
+		pselfname : selfname				
+	},function(data){
+		$('#oldfname').val(data.gwasfname);
+		$('#etextfname').val(data.gwasfname);
+		$('#etextlname').val(data.gwaslname);
+		$('#etextemail').val(data.gwasemail);
+	});
+}
+
+function edita(){
+	var cfname = $('#oldfname').val();
+	var ufname = $('#etextfname').val();
+	var ulname = $('#etextlname').val();
+	var uemail = $('#etextemail').val();
+
+	$.post("/update", {
+		pcfname : cfname,						
+		pufname : ufname,						
+		pulname : ulname,						
+		puemail : uemail						
+	},function(data){
+		$('#trig2').trigger( "click" );
+		$('#trig1').trigger( "click" );
+		$('#oldfname').val("");
+		$('#etextfname').val("");
+		$('#etextlname').val("");
+		$('#etextemail').val("");
+			alert(data);						
+	});
+}
+			
+</script>
+
+<style type="text/css">
+			 body {
+				margin:0;
+				padding:0;
+				overflow-x: hidden;
+			}
+			.center{
+				margin:0;
+				width:100%;
+				height:100%;		
+				padding:0;
+			}
+			.taas{
+				margin:0;
+				width:100%;
+				height:30px;		
+				padding:0;
+				position:absolute;
+			}
+			.taas-ul{
+				margin: 0 0 0 50%;
+				list-style-type:none;
+				position:absolute;
+			}
+			.taas-ul li{
+				margin: 5px 0 0 20px;
+				float:left;
+				cursor:pointer;
+			}
+			.taas-ul li:hover{
+				text-decoration: underline;
+			}
+			.sodlanan{
+				margin:30px 0 0 20%;
+				width:60%;
+				height:500px;		
+				padding:0;
+				position:absolute;
+				display:none;
+			}
+			.sodlanan1{
+				margin:30px 0 0 20%;
+				width:60%;
+				height:500px;		
+				padding:0;
+				position:absolute;
+				
+			}
+			.sodlanan2{
+				margin:30px 0 0 20%;
+				width:60%;
+				height:500px;		
+				padding:0;
+				position:absolute;
+				display:none;
+			}
+			.textsearch	{
+				margin: -30px 0 0 60%;
+				width:30%;
+				position:absolute;
+			}	
+			.pfname{
+				margin: 0 0 0 13%;
+				position:absolute;
+			}
+			.plname{
+				margin: 0 0 0 37%;
+				position:absolute;
+			}
+			.pemail{
+				margin: 0 0 0 60%;
+				position:absolute;
+			}
+			.conview{
+				margin: 3% 0 0 5%;
+				width:85%;
+				position:absolute;
+			}
+			#selectopt{
+				margin: 0 0 0 100px;
+				width:173px;
+				position:absolute;
+			}
+</style>
+
+<body>
+
+<div class="center">
+	
+<div class="taas">
+	<ul class="taas-ul">
+		<li id="trig"  onclick="caccount()">Create Account</li>
+		<li id="trig1" onclick="eaccount()">Edit Account</li>
+		<li id="trig2"  onclick="vaccount()">View Account</li>
+	</ul>
+</div>
+	
+<div class="sodlanan" id="sodlanan">
+	<h1>Create Account</h1>
+		<form action="/create" method="POST" >
+			<input type="text" 	id="textfname"	placeholder="First Name"	style="margin: 0 0 0 100px;"><br><br>
+			<input type="text"  id="textlname"	placeholder="Last Name"		style="margin: 0 0 0 100px;"><br><br>
+			<input type="text"  id="textemail"	placeholder="Email Address" style="margin: 0 0 0 100px;"><br><br>
+			<input type="button"    onclick="bcreate()" value="Create Now"  style="margin: 0 0 0 100px;"><br><br>
+		</form>
+</div>
+			
+<div class="sodlanan1" id="sodlanan1">
+	<h1>View Accounts</h1>
+		<input type="text" class="textsearch" placeholder="Search Accounts" onkeyup="searchdata()">
+			<p class="pfname">First Name</p>
+			<p class="plname">Last Name</p>
+			<p class="pemail">Email Address</p>
+			<div class="conview"></div>
+</div>
+
+<div class="sodlanan2" id="sodlanan2">
+	<h1>Edit/Update Accounts</h1>
+	
+	<form action="" method="POST" >
+		<select id="selectopt" onchange="changesel()">
+			<option>Select Account</option>
+		</select><br><br>
+		<input type="hidden"id="oldfname"	placeholder="old Name"		style="margin: 0 0 0 100px;">
+		<input type="text" 	id="etextfname"	placeholder="First Name"	style="margin: 0 0 0 100px;"><br><br>
+		<input type="text"  id="etextlname"	placeholder="Last Name"		style="margin: 0 0 0 100px;"><br><br>
+		<input type="text"  id="etextemail"	placeholder="Email Address" style="margin: 0 0 0 100px;"><br><br>
+		<input type="button"    onclick="edita()" value="Update Now"  	style="margin: 0 0 0 100px;"><br><br>
+	</form>
+</div>
+
+</div>
+
+</body>
+</html>
